@@ -50,6 +50,7 @@ COLOR = ['CRIMSON', 'FORESTGREEN', 'DODGERBLUE', 'PERU', 'BLUEVIOLET', 'DARKMAGE
 # STARLINK
 NAME = "Starlink"
 
+# Number of shells:
 SHELL_CNTR = 5
 
 MEAN_MOTION_REV_PER_DAY = [None]*SHELL_CNTR
@@ -60,7 +61,7 @@ INCLINATION_DEGREE = [None]*SHELL_CNTR
 BASE_ID = [None]*SHELL_CNTR
 ORB_WISE_IDS = [None]*SHELL_CNTR
 
-MEAN_MOTION_REV_PER_DAY[0] = 15.19  # Altitude ~550000 km
+MEAN_MOTION_REV_PER_DAY[0] = 15.19  # Altitude ~550000 km. The number of revolutions per day: field 8 of line 2 of TLE
 ALTITUDE_M[0] = 550000  # Altitude ~550000 km
 NUM_ORBS[0] = 72
 NUM_SATS_PER_ORB[0] = 22
@@ -248,5 +249,5 @@ def write_viz_files():
     writer_html.close()
 
 
-viz_string = generate_satelite_trajectories()
+viz_string = generate_satellite_trajectories()
 write_viz_files()
