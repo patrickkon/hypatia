@@ -101,10 +101,13 @@ def help_dynamic_state(
             num_time_steps += 1
 
         # Variables (load in for each thread such that they don't interfere)
+        # NOTE: therefore, all the prerequisite files (Except for dynamic_state/ dir) mentioned in https://github.com/patrickkon/hypatia/tree/master/satgenpy,
+        # are used to generate dynamic_state/ dir
         ground_stations = read_ground_stations_extended(output_generated_data_dir + "/" + name + "/ground_stations.txt")
         tles = read_tles(output_generated_data_dir + "/" + name + "/tles.txt")
         satellites = tles["satellites"]
         list_isls = read_isls(output_generated_data_dir + "/" + name + "/isls.txt", len(satellites))
+        # This just converts the file into a list (with the exception of the first column which represents ID. This is now implicitly attached to the order)
         list_gsl_interfaces_info = read_gsl_interfaces_info(
             output_generated_data_dir + "/" + name + "/gsl_interfaces_info.txt",
             len(satellites),
@@ -119,12 +122,15 @@ def help_dynamic_state(
             ((current + num_time_steps) * time_step_ns) / 1e6
         ))
 
+        # NOTE: this means, we loop through threads (above) sequentially, and each such thread processes a given number of time steps, roughly like so:
+        # [current_time_step, current_time_step + num_of_time_steps]. Thus, for example, in a scenario with 2 threads and 20 time steps:
+        # first thread: [0, 10], second thread: [11, 20]
         list_args.append((
             output_dynamic_state_dir,
-            epoch,
-            (current + num_time_steps) * time_step_ns + (time_step_ns if (i + 1) != num_threads else 0),
+            epoch, # Refers to start time. in our example above, this would be 0
+            (current + num_time_steps) * time_step_ns + (time_step_ns if (i + 1) != num_threads else 0), # simulation_end_time_ns. Refers to "current_time_step + num_of_time_steps"
             time_step_ns,
-            current * time_step_ns,
+            current * time_step_ns, # offset_ns. This refers to the starting time step time: i.e. "current_time_step"
             satellites,
             ground_stations,
             list_isls,

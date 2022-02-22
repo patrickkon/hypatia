@@ -92,13 +92,15 @@ def algorithm_free_gs_one_sat_many_only_over_isls(
     #
 
     # There is one GSL interface per ground station, and <# of GSs> interfaces per satellite
+    # NOTE: this is probably a suboptimal design. Why create so many files when only the first file created for this thread will be written.
     output_filename = output_dynamic_state_dir + "/gsl_if_bandwidth_" + str(time_since_epoch_ns) + ".txt"
     if enable_verbose_logs:
         print("  > Writing interface bandwidth state to: " + output_filename)
     with open(output_filename, "w+") as f_out:
-        if time_since_epoch_ns == 0:
+        if time_since_epoch_ns == 0: # True if this is the first time step of this thread's assigned time steps. e.g. if the total time interval (given in calls to "help_dynamic_state") is [0, 200], and the thread was assigned [10, 20], then this if condition will evaluate to true at 10 (refer to "generate_dynamic_state")
 
             # Satellite have <# of GSs> interfaces besides their ISL interfaces
+            # NOTE: question. What is the point of "num_isls_per_sat[node_id] + i"? Why have multiple rows for each satellite (if there are more than 1 GS)?
             for node_id in range(len(satellites)):
                 for i in range(list_gsl_interfaces_info[node_id]["number_of_interfaces"]):
                     f_out.write("%d,%d,%f\n" % (

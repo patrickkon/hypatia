@@ -103,13 +103,13 @@ def generate_dynamic_state_at(
     # Time
     time = epoch + time_since_epoch_ns * u.ns
     if enable_verbose_logs:
-        print("  > Epoch.................. " + str(epoch))
+        print("  > Epoch.................. " + str(epoch)) # note again that epoch refers to absolute start time, defined in "help_dynamic_state" function. 
         print("  > Time since epoch....... " + str(time_since_epoch_ns) + " ns")
         print("  > Absolute time.......... " + str(time))
 
     # Graphs
-    sat_net_graph_only_satellites_with_isls = nx.Graph()
-    sat_net_graph_all_with_only_gsls = nx.Graph()
+    sat_net_graph_only_satellites_with_isls = nx.Graph() # contains nodes (that represent satellites) and edges (that represent distance)
+    sat_net_graph_all_with_only_gsls = nx.Graph() # contains nodes (that represent satellites + GS) and edges (that represent distance)
 
     # Information
     for i in range(len(satellites)):
@@ -152,11 +152,14 @@ def generate_dynamic_state_at(
         )
 
         # Interface mapping of ISLs
+        # This is the interface number/ID for each satellite's ISL interface. If a satellite has 4 ISLs connected to other satellites, it's interfaces will be uniquely
+        # numbered from [0, 3]. This is why as shown in the next 2 rows, both ends of an ISL connection may have different interface ID: 
+        # e.g. for sat a this could be interface 0, but for sat b this could be interface 1. 
         sat_neighbor_to_if[(a, b)] = num_isls_per_sat[a]
         sat_neighbor_to_if[(b, a)] = num_isls_per_sat[b]
         num_isls_per_sat[a] += 1
         num_isls_per_sat[b] += 1
-        total_num_isls += 1
+        total_num_isls += 1 # for what? Probably remove this
 
     if enable_verbose_logs:
         print("  > Total ISLs............. " + str(len(list_isls)))
@@ -188,6 +191,7 @@ def generate_dynamic_state_at(
         print("\nGSL IN-RANGE INFORMATION")
 
     # What satellites can a ground station see
+    # NOTE: this is actually affected by angle of elevation. They use distance as a proxy. MAX_GSL_LENGTH_M is affected by SATELLITE_CONE_RADIUS_M and ALTITUDE_M
     ground_station_satellites_in_range = []
     for ground_station in ground_stations:
         # Find satellites in range
@@ -221,6 +225,9 @@ def generate_dynamic_state_at(
     # (a) Output the gsl_if_bandwidth_<t>.txt files
     # (b) Output the fstate_<t>.txt files
     #
+    # NOTE: better explanation. ALL these dynamic state algorithms are there to compute (and return) the "best next hop" for each satellite (and by extension, each GS) to each GS,
+    # in the current time step (i.e. "time_since_epoch_ns"). Refer to notes in "calculate_fstate_shortest_path_without_gs_relaying" function for details. 
+    # THIS IS WHAT dynamic state means. 
     if dynamic_state_algorithm == "algorithm_free_one_only_over_isls":
 
         return algorithm_free_one_only_over_isls(

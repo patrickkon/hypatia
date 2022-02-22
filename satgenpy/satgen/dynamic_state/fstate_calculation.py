@@ -34,6 +34,8 @@ def calculate_fstate_shortest_path_without_gs_relaying(
         # Satellites to ground stations
         # From the satellites attached to the destination ground station,
         # select the one which promises the shortest path to the destination ground station (getting there + last hop)
+        # NOTE: alternative explanation: for each satellite, find the neighbour (which could be the destination itself, i.e. the GS) which will give the shortest path,
+        # to reach each GS (the destination). i.e. find the best next hop
         dist_satellite_to_ground_station = {}
         for curr in range(num_satellites):
             for dst_gid in range(num_ground_stations):
@@ -55,7 +57,7 @@ def calculate_fstate_shortest_path_without_gs_relaying(
 
                 # By default, if there is no satellite in range for the
                 # destination ground station, it will be dropped (indicated by -1)
-                next_hop_decision = (-1, -1, -1)
+                next_hop_decision = (-1, -1, -1) # neighbour_id, interface ID of curr (that is connected to neighbour), interface ID of neighbour (that is connected to curr)
                 distance_to_ground_station_m = float("inf")
                 if len(possibilities) > 0:
                     dst_sat = possibilities[0][1]
@@ -94,6 +96,9 @@ def calculate_fstate_shortest_path_without_gs_relaying(
                 dist_satellite_to_ground_station[(curr, dst_gs_node_id)] = distance_to_ground_station_m
 
                 # Write to forwarding state
+                # NOTE: alternative explanation: only write best next hop to fstate files, IFF there are changes to the best next hop for each satellite. 
+                # e.g. if satellite 0 best next hop to GS 1 in previous time step (i.e. prev "time_since_epoch_ns") was satellite 1, and it is still satellite 1 in current
+                # time step, we do not update (i.e. we do not write to fstate files). THIS IS THE REASON the subsequent fstate_*.txt files can be empty. 
                 if not prev_fstate or prev_fstate[(curr, dst_gs_node_id)] != next_hop_decision:
                     f_out.write("%d,%d,%d,%d,%d\n" % (
                         curr,
