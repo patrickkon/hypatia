@@ -100,7 +100,8 @@ def algorithm_free_gs_one_sat_many_only_over_isls(
         if time_since_epoch_ns == 0: # True if this is the first time step of this thread's assigned time steps. e.g. if the total time interval (given in calls to "help_dynamic_state") is [0, 200], and the thread was assigned [10, 20], then this if condition will evaluate to true at 10 (refer to "generate_dynamic_state")
 
             # Satellite have <# of GSs> interfaces besides their ISL interfaces
-            # NOTE: question. What is the point of "num_isls_per_sat[node_id] + i"? Why have multiple rows for each satellite (if there are more than 1 GS)?
+            # NOTE: What is the point of "num_isls_per_sat[node_id] + i"? Why have multiple rows for each satellite (if there are more than 1 GS)? This is because, in addition to
+            # the ISL interfaces of a satellite, it will have 1 additional interface for each GS that exists. 
             for node_id in range(len(satellites)):
                 for i in range(list_gsl_interfaces_info[node_id]["number_of_interfaces"]):
                     f_out.write("%d,%d,%f\n" % (
