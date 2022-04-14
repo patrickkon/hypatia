@@ -37,45 +37,115 @@ EARTH_RADIUS = 6378135.0 # WGS72 value; taken from https://geographiclib.sourcef
 ECCENTRICITY = 0.0000001  # Circular orbits are zero, but pyephem does not permit 0, so lowest possible value
 ARG_OF_PERIGEE_DEGREE = 0.0
 PHASE_DIFF = True
-EPOCH = "2000-01-01 00:00:00"
+EPOCH = "2000-01-01 00:00:00" # WARNING NOTE: if modified epoch here, make sure to also modify epoch within tle_line1 of def generate_tles_from_scratch_manual. This is because the SAT IDs that we obtain from here, will be injected, as SAT IDs into the main_helper.py chain of functions, specifically in helper_dynamic_state.py. In short, we want the SAT IDs to match.
 
-# CONSTELLATION SPECIFIC PARAMETERS
-# STARLINK 550
-NAME = "starlink_550"
+# ---------------------------------------------------------------------------------------------------------------
 
-################################################################
-# The below constants are taken from Starlink's FCC filing as below:
-# [1]: https://fcc.report/IBFS/SAT-MOD-20190830-00087
-################################################################
+# SECTION: CONSTELLATION SPECIFIC PARAMETERS
 
-MEAN_MOTION_REV_PER_DAY = 15.19  # Altitude ~550 km
-ALTITUDE_M = 550000  # Altitude ~550 km
-SATELLITE_CONE_RADIUS_M = 940700 # From https://fcc.report/IBFS/SAT-MOD-20181108-00083/1569860.pdf (minimum angle of elevation: 25 deg)
-MAX_GSL_LENGTH_M = math.sqrt(math.pow(SATELLITE_CONE_RADIUS_M, 2) + math.pow(ALTITUDE_M, 2))
-MAX_ISL_LENGTH_M = 2 * math.sqrt(math.pow(EARTH_RADIUS + ALTITUDE_M, 2) - math.pow(EARTH_RADIUS + 80000, 2)) # ISLs are not allowed to dip below 80 km altitude in order to avoid weather conditions
-NUM_ORBS = 72
-NUM_SATS_PER_ORB = 22
-INCLINATION_DEGREE = 53
+
+# # STARLINK 550
+# NAME = "starlink_550"
+
+# ################################################################
+# # The below constants are taken from Starlink's FCC filing as below:
+# # [1]: https://fcc.report/IBFS/SAT-MOD-20190830-00087
+# ################################################################
+
+# MEAN_MOTION_REV_PER_DAY = 15.19  # Altitude ~550 km
+# ALTITUDE_M = 550000  # Altitude ~550 km
+# SATELLITE_CONE_RADIUS_M = 940700 # From https://fcc.report/IBFS/SAT-MOD-20181108-00083/1569860.pdf (minimum angle of elevation: 25 deg)
+# MAX_GSL_LENGTH_M = math.sqrt(math.pow(SATELLITE_CONE_RADIUS_M, 2) + math.pow(ALTITUDE_M, 2))
+# MAX_ISL_LENGTH_M = 2 * math.sqrt(math.pow(EARTH_RADIUS + ALTITUDE_M, 2) - math.pow(EARTH_RADIUS + 80000, 2)) # ISLs are not allowed to dip below 80 km altitude in order to avoid weather conditions
+# NUM_ORBS = 72
+# NUM_SATS_PER_ORB = 22
+# INCLINATION_DEGREE = 53
+
+# # Input file; Generated during simulation
+# # Note the file_name consists of the 2 city IDs being offset by the size of the constellation
+# # City IDs are available in the city_detail_file.
+# # If city ID is X (for Paris X = 24) and constellation is Starlink_550 (1584 satellites),
+# # then offset ID is 1584 + 24 = 1608.
+# path_file = "../../paper/satgenpy_analysis/data/starlink_550_isls_plus_grid_ground_stations_top_100_algorithm_free_one_only_over_isls/100ms_for_200s/manual/data/networkx_path_1608_to_1650.txt"
+
 
 
 # KUIPER 630
-"""
-NAME = "kuiper_630"
+# NAME = "kuiper_630"
+
+# ################################################################
+# # The below constants are taken from Kuiper's FCC filing as below:
+# # [1]: https://www.itu.int/ITU-R/space/asreceived/Publication/DisplayPublication/8716
+# ################################################################
+
+# MEAN_MOTION_REV_PER_DAY = 14.80  # Altitude ~630 km
+# ALTITUDE_M = 630000  # Altitude ~630 km
+# SATELLITE_CONE_RADIUS_M = ALTITUDE_M / math.tan(math.radians(30.0))  # Considering an elevation angle of 30 degrees; possible values [1]: 20(min)/30/35/45
+# MAX_GSL_LENGTH_M = math.sqrt(math.pow(SATELLITE_CONE_RADIUS_M, 2) + math.pow(ALTITUDE_M, 2))
+# MAX_ISL_LENGTH_M = 2 * math.sqrt(math.pow(EARTH_RADIUS + ALTITUDE_M, 2) - math.pow(EARTH_RADIUS + 80000, 2))  # ISLs are not allowed to dip below 80 km altitude in order to avoid weather conditions
+# NUM_ORBS = 34
+# NUM_SATS_PER_ORB = 34
+# INCLINATION_DEGREE = 51.9
+
+
+# # Input file; Generated during simulation
+# # Note the file_name consists of the 2 city IDs being offset by the size of the constellation
+# # City IDs are available in the city_detail_file.
+# # If city ID is X (for Paris X = 24) and constellation is Starlink_550 (1584 satellites),
+# # then offset ID is 1584 + 24 = 1608.
+# num_sats = NUM_ORBS*NUM_SATS_PER_ORB
+# gs_paris_id = num_sats + 24
+# gs_moscow_id = num_sats + 21
+# gs_src_id = gs_paris_id
+# gs_dst_id = gs_moscow_id
+# path_file = "../../../../hypatia_plus/data/kuiper_630/networkx_path_{}_to_{}.txt".format(gs_src_id, gs_dst_id)
+
+# with open(path_file, 'w') as out:
+#     s = '''0,1180-200-300-400-1177
+# 11700000000000,1608-202-201-203-180-224-1605'''
+#     out.write(s)
+
+
+
+#TELESAT 1015
+
+# GENERATION CONSTANTS
+NAME = "telesat_1015"
 
 ################################################################
-# The below constants are taken from Kuiper's FCC filing as below:
-# [1]: https://www.itu.int/ITU-R/space/asreceived/Publication/DisplayPublication/8716
+# The below constants are taken from Telesat's FCC filing as below:
+# [1]: https://fcc.report/IBFS/SAT-MPL-20200526-00053/2378318.pdf
 ################################################################
 
-MEAN_MOTION_REV_PER_DAY = 14.80  # Altitude ~630 km
-ALTITUDE_M = 630000  # Altitude ~630 km
-SATELLITE_CONE_RADIUS_M = ALTITUDE_M / math.tan(math.radians(30.0))  # Considering an elevation angle of 30 degrees; possible values [1]: 20(min)/30/35/45
+MEAN_MOTION_REV_PER_DAY = 13.66  # Altitude ~1015 km
+ALTITUDE_M = 1015000  # Altitude ~1015 km
+SATELLITE_CONE_RADIUS_M = ALTITUDE_M / math.tan(math.radians(10.0))  # Considering an elevation angle of 10 degrees;
 MAX_GSL_LENGTH_M = math.sqrt(math.pow(SATELLITE_CONE_RADIUS_M, 2) + math.pow(ALTITUDE_M, 2))
-MAX_ISL_LENGTH_M = 2 * math.sqrt(math.pow(EARTH_RADIUS + ALTITUDE_M, 2) - math.pow(EARTH_RADIUS + 80000, 2))  # ISLs are not allowed to dip below 80 km altitude in order to avoid weather conditions
-NUM_ORBS = 34
-NUM_SATS_PER_ORB = 34
-INCLINATION_DEGREE = 51.9
-"""
+# ISLs are not allowed to dip below 80 km altitude in order to avoid weather conditions
+MAX_ISL_LENGTH_M = 2 * math.sqrt(math.pow(EARTH_RADIUS + ALTITUDE_M, 2) - math.pow(EARTH_RADIUS + 80000, 2))
+NUM_ORBS = 27
+NUM_SATS_PER_ORB = 13
+INCLINATION_DEGREE = 98.98
+
+
+# Input file; Generated during simulation
+# Note the file_name consists of the 2 city IDs being offset by the size of the constellation
+# City IDs are available in the city_detail_file.
+# If city ID is X (for Paris X = 24) and constellation is Starlink_550 (1584 satellites),
+# then offset ID is 1584 + 24 = 1608.
+num_sats = NUM_ORBS*NUM_SATS_PER_ORB
+gs_paris_id = num_sats + 24
+gs_moscow_id = num_sats + 21
+gs_src_id = gs_paris_id
+gs_dst_id = gs_moscow_id
+path_file = "../../../../hypatia_plus/data/telesat_1015/networkx_path_{}_to_{}.txt".format(gs_src_id, gs_dst_id)
+
+with open(path_file, 'w') as out:
+    s = '''0,{src}-1-2-3-{dst}
+11700000000000,1608-202-201-203-180-224-1605'''.format(src=gs_src_id, dst=gs_dst_id)
+    out.write(s)
+
+# -------------------------------------------------------------------------------------------------------------------
 
 # General files needed to generate visualizations; Do not change for different simulations
 topFile = "../static_html/top.html"
@@ -83,14 +153,10 @@ bottomFile = "../static_html/bottom.html"
 city_detail_file = "../../paper/satellite_networks_state/input_data/ground_stations_cities_sorted_by_estimated_2025_pop_top_1000.basic.txt"
 
 # Time in ms for which visualization will be generated
-GEN_TIME=46800  #ms
+# GEN_TIME=167500  #ms
+# GEN_TIME=11700000 #ms
+GEN_TIME = 0 #ms
 
-# Input file; Generated during simulation
-# Note the file_name consists of the 2 city IDs being offset by the size of the constellation
-# City IDs are available in the city_detail_file.
-# If city ID is X (for Paris X = 24) and constellation is Starlink_550 (1584 satellites),
-# then offset ID is 1584 + 24 = 1608.
-path_file = "../../paper/satgenpy_analysis/data/starlink_550_isls_plus_grid_ground_stations_top_100_algorithm_free_one_only_over_isls/100ms_for_200s/manual/data/networkx_path_1608_to_1650.txt"
 
 # Output directory for creating visualization html files
 OUT_DIR = "../viz_output/"
@@ -111,6 +177,8 @@ def generate_path_at_time():
     global dst_GS
     global paths_over_time
     global OUT_HTML_FILE
+    for line in open(path_file):
+        print(line)
     lines = [line.rstrip('\n') for line in open(path_file)]
     for i in range(len(lines)):
         val = lines[i].split(",")
@@ -119,11 +187,14 @@ def generate_path_at_time():
     paths_over_time.append((0, nodes))
     SEL_PATH_TIME = 0
     SEL_PATH = []
+    # print("dudde",paths_over_time)
     for i in range(len(paths_over_time)):
         start_ms = round((paths_over_time[i][0]) / 1000000)
+        print("satart mas", start_ms)
         start_next = 99999999999
         try:
             start_next = round((paths_over_time[i + 1][0]) / 1000000)
+            # print("satart nex", start_next)
         except:
             None
         print(start_ms, GEN_TIME)
@@ -141,8 +212,11 @@ def generate_path_at_time():
         viz_string += "var redSphere = viewer.entities.add({name : '', position: Cesium.Cartesian3.fromDegrees(" \
                      + str(math.degrees(sat_objs[i]["sat_obj"].sublong)) + ", " \
                      + str(math.degrees(sat_objs[i]["sat_obj"].sublat)) + ", "+str(sat_objs[i]["alt_km"]*1000)+"), "\
-                     + "ellipsoid : {radii : new Cesium.Cartesian3(20000.0, 20000.0, 20000.0), "\
-                     + "material : Cesium.Color.BLACK.withAlpha(1),}});\n"
+                     + "label: new Cesium.LabelGraphics({position : Cesium.Cartesian3.fromDegrees(" \
+                     + str(math.degrees(sat_objs[i]["sat_obj"].sublong)) + ", " \
+                     + str(math.degrees(sat_objs[i]["sat_obj"].sublat)) + ", "+str(sat_objs[i]["alt_km"]*1000)+"), "\
+                     + "text : '" + str(i) + "', font : '18px Helvetica', fillColor : Cesium.Color.BLUE, outlineColor : Cesium.Color.BLACK, outlineWidth : 4,}), "\
+                     + "});\n"
 
     orbit_links = util.find_orbit_links(sat_objs, NUM_ORBS, NUM_SATS_PER_ORB)
     for key in orbit_links:
@@ -216,6 +290,7 @@ def generate_path_at_time():
                           + "color: Cesium.Color.RED.withAlpha(1.0), outlineWidth: 0, outlineColor: Cesium.Color.BLACK})}});"
 
     OUT_HTML_FILE += "_" + str(GEN_TIME) + ".html"
+    print(OUT_HTML_FILE)
     return viz_string
 
 
