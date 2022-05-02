@@ -47,8 +47,8 @@ def read_isls(filename_isls, num_satellites):
                 raise ValueError("Satellite does not exist: %d" % b)
             if b <= a:
                 raise ValueError("The second satellite index must be strictly larger than the first")
-            if (a, b) in isls_set:
-                raise ValueError("Duplicate ISL: (%d, %d)" % (a, b))
+            # if (a, b) in isls_set:
+            #     raise ValueError("Duplicate ISL: (%d, %d)" % (a, b))
             isls_set.add((a, b))
 
             # Finally add it to the list
