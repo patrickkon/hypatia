@@ -392,8 +392,51 @@ EPOCH = "2000-01-01 00:00:00" # WARNING NOTE: if modified epoch here, make sure 
 # 11700000000000,1608-202-201-203-180-224-1605'''.format(src=gs_src_id, dst=gs_dst_id)
 #     out.write(s)
 
-# GENERATION CONSTANTS
-NAME = "starlink_550_200_200" # 550 altitude, 200 planes with 200 sats each
+# # GENERATION CONSTANTS
+# NAME = "starlink_550_200_200" # 550 altitude, 200 planes with 200 sats each
+
+# ################################################################
+# # The below constants are taken from Telesat's FCC filing as below:
+# # [1]: https://fcc.report/IBFS/SAT-MPL-20200526-00053/2378318.pdf
+# ################################################################
+
+# MEAN_MOTION_REV_PER_DAY = 15.19  # Altitude ~550 km
+# ALTITUDE_M = 550000  # Altitude ~550 km
+# SATELLITE_CONE_RADIUS_M = ALTITUDE_M / math.tan(math.radians(25.0))  # Considering an elevation angle of 25 degrees;
+# MAX_GSL_LENGTH_M = math.sqrt(math.pow(SATELLITE_CONE_RADIUS_M, 2) + math.pow(ALTITUDE_M, 2))
+# # ISLs are not allowed to dip below 80 km altitude in order to avoid weather conditions
+# MAX_ISL_LENGTH_M = 2 * math.sqrt(math.pow(EARTH_RADIUS + ALTITUDE_M, 2) - math.pow(EARTH_RADIUS + 80000, 2))
+# NUM_ORBS = 200
+# NUM_SATS_PER_ORB = 200
+# INCLINATION_DEGREE = 53
+
+
+# # Input file; Generated during simulation
+# # Note the file_name consists of the 2 city IDs being offset by the size of the constellation
+# # City IDs are available in the city_detail_file.
+# # If city ID is X (for Paris X = 24) and constellation is Starlink_550 (1584 satellites),
+# # then offset ID is 1584 + 24 = 1608.
+# num_sats = NUM_ORBS*NUM_SATS_PER_ORB
+# gs_paris_id = num_sats + 24
+# gs_moscow_id = num_sats + 21
+# gs_src_id = gs_paris_id
+# gs_dst_id = gs_moscow_id
+# parent_dir = "../../../../hypatia_plus/data/{}/".format(NAME)
+# isExist = os.path.exists(parent_dir)
+# if not isExist:
+#     os.makedirs(parent_dir)
+#     print("Creating non-existing dir: {}".format(parent_dir))
+# path_file = parent_dir + "networkx_path_{}_to_{}.txt".format(gs_src_id, gs_dst_id)
+# with open(path_file, 'w') as out:
+#     s = '''0,{src}-1-2-3-{dst}
+# 11700000000000,1608-202-201-203-180-224-1605'''.format(src=gs_src_id, dst=gs_dst_id)
+#     out.write(s)
+
+
+
+
+# GENERATION CONSTANTS. PARIS MADRID
+NAME = "starlink_550" # 550 altitude
 
 ################################################################
 # The below constants are taken from Telesat's FCC filing as below:
@@ -406,8 +449,8 @@ SATELLITE_CONE_RADIUS_M = ALTITUDE_M / math.tan(math.radians(25.0))  # Consideri
 MAX_GSL_LENGTH_M = math.sqrt(math.pow(SATELLITE_CONE_RADIUS_M, 2) + math.pow(ALTITUDE_M, 2))
 # ISLs are not allowed to dip below 80 km altitude in order to avoid weather conditions
 MAX_ISL_LENGTH_M = 2 * math.sqrt(math.pow(EARTH_RADIUS + ALTITUDE_M, 2) - math.pow(EARTH_RADIUS + 80000, 2))
-NUM_ORBS = 200
-NUM_SATS_PER_ORB = 200
+NUM_ORBS = 72
+NUM_SATS_PER_ORB = 22
 INCLINATION_DEGREE = 53
 
 
@@ -418,9 +461,11 @@ INCLINATION_DEGREE = 53
 # then offset ID is 1584 + 24 = 1608.
 num_sats = NUM_ORBS*NUM_SATS_PER_ORB
 gs_paris_id = num_sats + 24
-gs_moscow_id = num_sats + 21
-gs_src_id = gs_paris_id
-gs_dst_id = gs_moscow_id
+gs_madrid_id = num_sats + 54
+gs_sao_paolo = num_sats + 3
+gs_fortaleza = num_sats + 98
+gs_src_id = gs_sao_paolo
+gs_dst_id = gs_fortaleza
 parent_dir = "../../../../hypatia_plus/data/{}/".format(NAME)
 isExist = os.path.exists(parent_dir)
 if not isExist:

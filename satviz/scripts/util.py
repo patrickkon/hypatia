@@ -184,6 +184,38 @@ def find_grid_links(sat_positions, num_orbit, num_sats_per_orbit):
     #print("num links:", cntr)
     return grid_links
 
+def find_reverse_grid_links(sat_positions, num_orbit, num_sats_per_orbit):
+    """
+    Same as the above but reversed. i.e. the above finds 2 links for a given SAT, this finds the leftover 2 links necessary to form +grid for that SAT. 
+    Generates +Grid connectivity between satellites
+    :param sat_positions: List of satellite objects
+    :param num_orbit: Number of orbits
+    :param num_sats_per_orbit: Number of satellites per orbit
+    :return: +Grid links
+    """
+    grid_links = {}
+    cntr = 0
+    for i in range(0, len(sat_positions)):
+        sel_sat_id = get_neighbor_satellite(sat_positions[i]["orb_id"], sat_positions[i]["orb_sat_id"],
+                                                 0, -1, sat_positions,
+                                                 num_orbit, num_sats_per_orbit)
+        grid_links[cntr] = {
+            "sat1": i,
+            "sat2": sel_sat_id,
+            "dist": -1.0
+        }
+        cntr += 1
+        sel_sat_id = get_neighbor_satellite(sat_positions[i]["orb_id"], sat_positions[i]["orb_sat_id"],
+                                                 -1, 0, sat_positions,
+                                                 num_orbit, num_sats_per_orbit)
+        grid_links[cntr] = {
+            "sat1": i,
+            "sat2": sel_sat_id,
+            "dist": -1.0
+        }
+        cntr += 1
+    #print("num links:", cntr)
+    return grid_links
 
 def write_viz_files(viz_string, top_file, bottom_file, out_file):
     """

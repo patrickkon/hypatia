@@ -39,7 +39,7 @@ globe.imageryLayers.removeAll();
 globe.baseColor = Cesium.Color.fromCssColorString('#f7fbff');
 
 const osm = new Cesium.OpenStreetMapImageryProvider({
-    url : 'https://stamen-tiles.a.ssl.fastly.net/toner-background/'
+    url : 'https://stamen-tiles.a.ssl.fastly.net/watercolor/'
 });
 
 var tonerLayer = globe.imageryLayers.addImageryProvider(
@@ -49,7 +49,7 @@ var tonerLayer = globe.imageryLayers.addImageryProvider(
     //     credit : 'Map tiles by Stamen Design, under CC BY 3.0. Data by OpenStreetMap, under CC BY SA.'
     // })
 );
-tonerLayer.alpha = 0.3;
-tonerLayer.brightness = 3;
+// tonerLayer.alpha = 0.3;
+tonerLayer.brightness = 2;
 tonerLayer.contrast = 0.7;
 
